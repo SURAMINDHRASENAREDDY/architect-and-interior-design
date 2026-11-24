@@ -9,7 +9,7 @@ import {
 
 // Local PHP backend address.
 // We will change this when deploying the backend.
-const API_BASE_URL = "http://127.0.0.1:8000";
+const API_BASE_URL = "https://architect-interior-design-api.onrender.com";
 
 const form = document.getElementById("registration-form");
 const submitButton = document.getElementById("submit");
