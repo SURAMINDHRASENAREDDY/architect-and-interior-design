@@ -1,0 +1,15 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+vendor/
+node_modules/
+.DS_Store
+credentials/
+backend/credentials/
+*firebase-adminsdk*.json
+*service-account*.json
+firebase-service-account.json
+*.pem
+*.key

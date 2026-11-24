@@ -1,0 +1,16 @@
+
+# Environment secrets
+.env
+.env.*
+!.env.example
+
+# Composer dependencies
+/vendor/
+
+# Firebase Admin private credentials
+/backend/credentials/
+
+# Firebase service-account private keys
+*firebase-adminsdk*.json
+*service-account*.json
+/credentials/

@@ -46,7 +46,7 @@ body {
   100% { transform: scale(1); }
 }
 
-  
+
 
 h2 {
     font-size: 24px;
@@ -107,22 +107,30 @@ input {
     <div class="container">
         <div class="form-container">
             <h2>Login</h2>
-            <form id="login-form" style="text-align: center;">
+            <form id="login-form" method="post" style="text-align: center;">
                 <div class="input-container">
-                    <label for="username">Username</label>
-                    <input type="text" id="username" name="username">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email"
+                           autocomplete="username" required>
                 </div>
                 <div class="input-container">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password">
+                    <input type="password" id="password" name="password"
+                           autocomplete="current-password" required>
                 </div>
                 <button id="b1" type="submit">Login</button><br><br>
-                <h3>Don't have an account ? <button id="a1" formaction="./registrationpage.html" style="color: rgb(242, 242, 170);">Sign Up</button></h3>
+                <h3>Don't have an account?
+                    <button id="a1" type="button"
+                            style="color: rgb(242, 242, 170);">
+                        Sign Up
+                    </button>
+                </h3>
             </form>
         </div>
     </div>
 
     <script src="script.js"></script>
+    <script type="module" src="auth-login.js"></script>
 
 
 </body>
