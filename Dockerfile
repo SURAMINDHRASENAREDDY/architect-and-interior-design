@@ -9,6 +9,9 @@ RUN apt-get update \
         libicu-dev \
         libonig-dev \
         unzip \
+        passwd \
+    && (getent group 1000 >/dev/null || groupadd --gid 1000 render-secrets) \
+    && usermod --append --groups 1000 www-data \
     && docker-php-ext-install -j"$(nproc)" \
         curl \
         intl \
