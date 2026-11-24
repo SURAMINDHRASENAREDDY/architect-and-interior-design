@@ -45,7 +45,22 @@ function handleRegistrationRequest(): void
         return;
     }
 
-    $authorization = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+    $authorization = trim((string) (
+        $_SERVER['HTTP_AUTHORIZATION']
+        ?? $_SERVER['REDIRECT_HTTP_AUTHORIZATION']
+        ?? ''
+    ));
+
+    // Apache may expose Authorization through request headers
+    // instead of the HTTP_AUTHORIZATION server variable.
+    if ($authorization === '' && function_exists('getallheaders')) {
+        foreach (getallheaders() as $headerName => $headerValue) {
+            if (strcasecmp((string) $headerName, 'Authorization') === 0) {
+                $authorization = trim((string) $headerValue);
+                break;
+            }
+        }
+    }
 
     if (!preg_match('/^Bearer\s+(.+)$/i', $authorization, $matches)) {
         registrationResponse(401, [
