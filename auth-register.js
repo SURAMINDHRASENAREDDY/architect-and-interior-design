@@ -3,6 +3,7 @@ import { auth } from "./firebase-config.js";
 
 import {
     createUserWithEmailAndPassword,
+    signInWithEmailAndPassword,
     updateProfile,
     getIdToken
 } from "https://www.gstatic.com/firebasejs/13.4.0/firebase-auth.js";
@@ -30,6 +31,10 @@ function showMessage(message, isError = false) {
 
 function getFirebaseErrorMessage(error) {
     const messages = {
+        "auth/invalid-credential":
+            "Incorrect email or password for the existing account.",
+        "auth/user-disabled":
+            "This Firebase account has been disabled.",
         "auth/email-already-in-use":
             "This email is already registered. Please log in.",
         "auth/invalid-email":
@@ -91,18 +96,33 @@ form.addEventListener("submit", async (event) => {
     submitButton.disabled = true;
     submitButton.textContent = "Registering...";
 
-    let firebaseAccountCreated = false;
+    let firebaseAccountAuthenticated = false;
 
     try {
-        // 1. Create Firebase account.
-        const credential = await createUserWithEmailAndPassword(
-            auth,
-            email,
-            password
-        );
+        // 1. Create a new Firebase account or recover the existing one.
+        let credential;
+
+        try {
+            credential = await createUserWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+        } catch (creationError) {
+            if (creationError.code !== "auth/email-already-in-use") {
+                throw creationError;
+            }
+
+            // Authenticate the existing account instead of creating a duplicate.
+            credential = await signInWithEmailAndPassword(
+                auth,
+                email,
+                password
+            );
+        }
 
         const user = credential.user;
-        firebaseAccountCreated = true;
+        firebaseAccountAuthenticated = true;
 
         // 2. Save the user's display name in Firebase.
         await updateProfile(user, {
@@ -137,7 +157,7 @@ form.addEventListener("submit", async (event) => {
         }
 
         showMessage(
-            "Registration successful! Your Firebase account and MySQL profile have been created."
+            "Success! Your Firebase account and database profile are synchronized."
         );
 
         form.reset();
@@ -145,9 +165,9 @@ form.addEventListener("submit", async (event) => {
     } catch (error) {
         console.error("Registration error:", error);
 
-        if (firebaseAccountCreated) {
+        if (firebaseAccountAuthenticated) {
             showMessage(
-                `Your Firebase account was created, but MySQL profile synchronization failed: ${error.message}. Do not register again; we'll resolve the profile synchronization.`,
+                `Firebase authentication succeeded, but database profile synchronization failed: ${error.message}. Do not register again; we'll resolve the profile synchronization.`,
                 true
             );
         } else {
